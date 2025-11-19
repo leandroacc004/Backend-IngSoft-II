@@ -1,0 +1,14 @@
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "nombre": "Leandro",
+  "correo": "leandro@gmail.com",
+  "password": "123456"
+}
+
+
+//curl -X POST -H "Content-Type: application/json" -d @alumnito.json http://localhost:3000/alumnos
+//curl -X GET -H "Content-Type: application/json" http://localhost:3000/alumnos
+//curl -X GET -H "Content-Type: application/json" http://localhost:3000/alumnos/20250003
+//curl -X DELETE -H "Content-Type: application/json" http://localhost:3000/alumnos/20250003

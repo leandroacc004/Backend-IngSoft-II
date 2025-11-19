@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "pg4dm1n$",
+    "database": "UL_prueba",
+    "host": "127.0.0.1",
+    "port": 5433,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "pg4dm1n$",
+    "database": "UL_prueba",
+    "host": "127.0.0.1",
+    "port": 5433,
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "pg4dm1n$",
+    "database": "UL_prueba",
+    "host": "127.0.0.1",
+    "port": 5433,
+    "dialect": "postgres"
+  }
+}
