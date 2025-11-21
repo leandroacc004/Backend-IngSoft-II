@@ -1,62 +1,86 @@
 // src/controllers/pedidoController.js
 const { Pedido, ItemPedido, Producto, User } = require('../../db/models'); 
 
-// POST /api/pedidos - Crea un nuevo pedido (CHECKOUT)
+
+// POST /api/pedidos - Crea un nuevo pedido (VALIDANDO PRECIOS)
 exports.createOrder = async (req, res) => {
-    // req.user viene del middleware JWT (req.user.id es el ID del estudiante)
-    const { items, subtotal, delivery, total, metodoPago } = req.body;
-    const usuarioId = req.user.id; // ID del estudiante logueado
+    const { items, metodoPago } = req.body; // Ya no leemos 'total' ni 'subtotal' del body
+    const usuarioId = req.user.id;
 
     if (!items || items.length === 0) {
         return res.status(400).json({ message: 'El pedido no puede estar vacío.' });
     }
 
     try {
-        // 1. Generar un ID único (como lo hace el frontend con crypto.randomUUID())
-        //const pedidoId = uuidv4(); 
+        let subtotalCalculado = 0;
+        const itemsToSave = [];
 
-        // 2. Crear el Pedido (la orden principal)
+        // 1. Recorremos los items para buscar sus precios REALES en la DB
+        for (const item of items) {
+            // Buscamos el producto en la DB
+            const productoDB = await Producto.findByPk(item.producto.idProducto);
+
+            if (!productoDB) {
+                return res.status(400).json({ message: `Producto con ID ${item.producto.idProducto} no existe.` });
+            }
+
+            // Verificamos stock (Opcional pero recomendado)
+            if (!productoDB.stock) {
+                return res.status(400).json({ message: `El producto ${productoDB.nombre} no tiene stock.` });
+            }
+
+            // Usamos el precio de la DB, NO el del frontend
+            const precioReal = Number(productoDB.precio);
+            const cantidad = item.cantidad;
+            
+            subtotalCalculado += precioReal * cantidad;
+
+            // Preparamos el objeto para guardar (con el precio real snapshot)
+            itemsToSave.push({
+                productoId: productoDB.id,
+                nombreSnapshot: productoDB.nombre,
+                precioUnitarioSnapshot: precioReal, // <--- Precio seguro
+                cantidad: cantidad
+            });
+        }
+
+        // 2. Definir Delivery (Fijo o Dinámico)
+        const costoDelivery = 5.00; // Aquí podrías poner lógica dinámica si quisieras
+        const totalCalculado = subtotalCalculado + costoDelivery;
+
+        // 3. Crear el Pedido con los montos calculados
         const newPedido = await Pedido.create({
-            // id: pedidoId, lo hace la DB
             usuarioId,
-            repartidorId: null, // Sin repartidor asignado al inicio
+            repartidorId: null,
             metodoPago,
-            subtotal,
-            delivery,
-            total,
+            subtotal: subtotalCalculado, // <--- Valor del backend
+            delivery: costoDelivery,
+            total: totalCalculado,       // <--- Valor del backend
             estado: 'CREADO',
         });
 
-        // 3. Preparar los ítems del pedido (el carrito)
-        const itemsToSave = items.map(item => ({
-            pedidoId: newPedido.id,
-            productoId: item.producto.idProducto, // El ID del producto
-            nombreSnapshot: item.producto.nombre, 
-            precioUnitarioSnapshot: item.producto.precio,
-            cantidad: item.cantidad,
-        }));
-        
-        // 4. Crear los ItemPedido
-        await ItemPedido.bulkCreate(itemsToSave);
+        // 4. Asignar el ID del pedido a los items y guardarlos
+        const itemsFinales = itemsToSave.map(i => ({ ...i, pedidoId: newPedido.id }));
+        await ItemPedido.bulkCreate(itemsFinales);
+
         const idFormateado = String(newPedido.id).padStart(8, '0');
-        // 5. Devolver el objeto Pedido que el frontend espera (CheckoutFacade.ts)
+
         return res.status(201).json({
+            message: 'Pedido creado con precios validados.',
             id: idFormateado,
             fecha: newPedido.fecha,
             estado: newPedido.estado,
-            total: Number(newPedido.total),
-            delivery: Number(newPedido.delivery),
-            subtotal: Number(newPedido.subtotal),
+            // Devolvemos al front los valores que NOSOTROS calculamos
+            subtotal: subtotalCalculado, 
+            delivery: costoDelivery,
+            total: totalCalculado,
             metodo: newPedido.metodoPago,
-            // Nota: No devolvemos 'items' aquí, el frontend confía en que los guardamos.
         });
 
     } catch (error) {
         console.error('Error al crear pedido:', error);
         return res.status(500).json({ message: 'Error interno al procesar el pedido.' });
     }
-
-    
 };
 
 
@@ -231,5 +255,35 @@ exports.acceptOrder = async (req, res) => {
     } catch (error) {
         console.error('Error al aceptar pedido:', error);
         return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+
+// PATCH CALIFICAR PEDIDOS
+exports.rateOrder = async (req, res) => {
+    const { id } = req.params;
+    const { puntaje } = req.body; // Esperamos un número del 1 al 5
+
+    if (!puntaje || puntaje < 1 || puntaje > 5) {
+        return res.status(400).json({ message: 'La calificación debe ser entre 1 y 5.' });
+    }
+
+    try {
+        const pedido = await Pedido.findByPk(id);
+
+        if (!pedido) return res.status(404).json({ message: 'Pedido no encontrado.' });
+
+        // Validar que el pedido esté entregado (regla de negocio)
+        if (pedido.estado !== 'ENTREGADO') {
+            return res.status(400).json({ message: 'Solo puedes calificar pedidos entregados.' });
+        }
+
+        pedido.calificacion = puntaje;
+        await pedido.save();
+
+        return res.json({ message: 'Calificación guardada exitosamente.', pedido });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error al calificar.' });
     }
 };

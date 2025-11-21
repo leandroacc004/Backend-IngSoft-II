@@ -20,6 +20,9 @@ router.put('/:id', verifyToken, pedidoController.updateOrder);
 // DELETE Eliminar (NUEVA RUTA)
 router.delete('/:id', verifyToken, pedidoController.deleteOrder);
 
+// Calificar pedido (NUEVA)
+router.patch('/:id/calificar', verifyToken, pedidoController.rateOrder);
+
 // [Aquí irán otras rutas como Historial y Repartidor]
 
 

@@ -49,6 +49,11 @@ module.exports = {
       total: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false
+      },
+      calificacion: {
+        type: Sequelize.INTEGER,
+        allowNull: true, // Al principio es nulo porque no se ha calificado
+        validate: { min: 1, max: 5 }
       }
     }, { timestamps: false });
 
