@@ -1,0 +1,50 @@
+### ------------------------------------------------------------------------
+### 3. TIENDAS Y CATÁLOGO
+### ------------------------------------------------------------------------
+
+### 3.1 Listar todas las Tiendas
+GET http://localhost:3000/api/tiendas
+
+### 3.2 Buscar Tiendas (Buscador)
+GET http://localhost:3000/api/tiendas?q=dunkin
+
+### 3.3 Ver Detalle de Tienda y sus Productos (ID 1: Dunkin)
+GET http://localhost:3000/api/tiendas/1
+
+### ------------------------------------------------------------------------
+### ADMINISTRACIÓN DE TIENDA (Requiere Token de TIENDA de 01_Auth)
+### ------------------------------------------------------------------------
+
+### 3.4 Añadir Producto Nuevo
+POST http://localhost:3000/api/tiendas/productos
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_TIENDA_AQUI>
+
+{
+  "nombre": "Munchkins x20",
+  "precio": 19.90,
+  "imagen": "/img/productos/munchkins.jpg",
+  "stock": true
+}
+
+### 3.5 Actualizar Stock
+PATCH http://localhost:3000/api/tiendas/productos/1/stock
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_TIENDA_AQUI>
+
+{
+  "stock": false
+}
+
+### 3.6 Actualizar Precio
+PATCH http://localhost:3000/api/tiendas/productos/1/precio
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_TIENDA_AQUI>
+
+{
+  "precio": 25.00
+}
+
+### 3.7 [NO IMPLEMENTADO] Crear Tienda Nueva
+# Tu backend actual no tiene una ruta POST /api/tiendas en 'src/routes/tiendas.js'
+# POST http://localhost:3000/api/tiendas

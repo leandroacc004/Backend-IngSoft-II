@@ -1,0 +1,23 @@
+### ------------------------------------------------------------------------
+### 6. FLUJO DEL REPARTIDOR
+### (Requiere Token de REPARTIDOR obtenido en 01_Auth)
+### ------------------------------------------------------------------------
+
+### 6.1 Ver Pedidos Disponibles
+# Solo muestra pedidos con estado 'CREADO' y sin repartidor.
+GET http://localhost:3000/api/repartidor/pedidos/disponibles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiMjAyMjAwMDEiLCJyb2wiOiJhbHVtbm8iLCJ0aWVuZGFJZCI6bnVsbCwiaWF0IjoxNzYzNzQzNzk5LCJleHAiOjE3NjM4MzAxOTl9.TcEv85dirFRNcovgLTF2f8iptXZjoDTHDfm0cfwAoDc
+
+### 6.2 Aceptar un Pedido
+# Reemplaza '1' por el ID de un pedido disponible.
+PATCH http://localhost:3000/api/repartidor/pedidos/1/aceptar
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiY29kaWdvIjoiUkVQLTAwMSIsInJvbCI6InJlcGFydGlkb3IiLCJ0aWVuZGFJZCI6bnVsbCwiaWF0IjoxNzYzNzUzNzAxLCJleHAiOjE3NjM4NDAxMDF9.NOHoWWLt0fU6b3iuLrUoOW_xHnL9q41kBhAtCGJKuq8
+
+### 6.3 Confirmar Entrega
+# El repartidor marca que ya entregó el pedido.
+PUT http://localhost:3000/api/pedidos/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiY29kaWdvIjoiUkVQLTAwMSIsInJvbCI6InJlcGFydGlkb3IiLCJ0aWVuZGFJZCI6bnVsbCwiaWF0IjoxNzYzNzUzNzAxLCJleHAiOjE3NjM4NDAxMDF9.NOHoWWLt0fU6b3iuLrUoOW_xHnL9q41kBhAtCGJKuq8
+{
+  "estado": "ENTREGADO"
+}

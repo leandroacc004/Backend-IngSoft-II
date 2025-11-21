@@ -1,0 +1,37 @@
+### ------------------------------------------------------------------------
+### 4. CARRITO PERSISTENTE (NUEVO)
+### (Requiere Token de Alumno)
+### ------------------------------------------------------------------------
+
+### 4.1 Ver mi carrito actual (Debería estar vacío al inicio)
+GET http://localhost:3000/api/carrito
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+### 4.2 Agregar Producto (Café Pequeño - ID 1)
+POST http://localhost:3000/api/carrito
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiMjAyMjAwMDEiLCJyb2wiOiJhbHVtbm8iLCJ0aWVuZGFJZCI6bnVsbCwiaWF0IjoxNzYzNzQzNzk5LCJleHAiOjE3NjM4MzAxOTl9.TcEv85dirFRNcovgLTF2f8iptXZjoDTHDfm0cfwAoDc
+
+{
+  "productoId": 1,
+  "cantidad": 2
+}
+
+### 4.3 Agregar Otro Producto (Starbucks - ID 4)
+POST http://localhost:3000/api/carrito
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+{
+  "productoId": 4,
+  "cantidad": 1
+}
+
+### 4.4 Verificar persistencia (Debe listar los items agregados)
+GET http://localhost:3000/api/carrito
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+### 4.5 Eliminar un item del carrito
+# OJO: Usa el 'id' del ItemCarrito, NO del producto. Mira la respuesta de 4.4 para saber el ID.
+DELETE http://localhost:3000/api/carrito/1
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>

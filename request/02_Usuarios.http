@@ -1,0 +1,31 @@
+### ------------------------------------------------------------------------
+### 2. GESTIÓN DE PERFIL
+### (Requiere Token de Alumno o cualquiera válido)
+### ------------------------------------------------------------------------
+
+### 2.1 Ver Mi Perfil
+# Reemplaza el '1' por el ID que te devolvió el Login
+GET http://localhost:3000/api/users/1
+Authorization: Bearer <PEGAR_TOKEN_AQUI>
+
+### 2.2 Editar Perfil
+PUT http://localhost:3000/api/users/1
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_AQUI>
+
+{
+  "nombre": "Leandro Editado"
+}
+
+### 2.3 Activar/Desactivar Usuario (Switch)
+PUT http://localhost:3000/api/users/1
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_AQUI>
+
+{
+  "activo": false
+}
+
+### 2.4 Listar todos los usuarios (Solo para pruebas)
+GET http://localhost:3000/api/users
+Authorization: Bearer <PEGAR_TOKEN_AQUI>

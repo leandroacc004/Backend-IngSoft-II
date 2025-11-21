@@ -25,6 +25,8 @@ router.patch('/:id/calificar', verifyToken, pedidoController.rateOrder);
 
 // [Aquí irán otras rutas como Historial y Repartidor]
 
+// NUEVA RUTA: Reportar Incidencia
+router.post('/:id/reportar', verifyToken, pedidoController.reportIssue);
 
 
 module.exports = router;

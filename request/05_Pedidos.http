@@ -1,0 +1,60 @@
+### ------------------------------------------------------------------------
+### 5. CREACIÓN Y HISTORIAL DE PEDIDOS
+### (Requiere Token de Alumno)
+### ------------------------------------------------------------------------
+
+### 5.1 CREAR PEDIDO (Checkout)
+# Envía los items que el usuario confirmó comprar.
+POST http://localhost:3000/api/pedidos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiMjAyMjAwMDEiLCJyb2wiOiJhbHVtbm8iLCJ0aWVuZGFJZCI6bnVsbCwiaWF0IjoxNzYzNzUzNTczLCJleHAiOjE3NjM4Mzk5NzN9.wb1vpHAs-8LTSVoewPsrTOysDMtw5rn-KEFbD0arDD4
+
+{
+  "metodoPago": "yape",
+  "items": [
+    {
+      "cantidad": 2,
+      "producto": { "idProducto": 1 }
+    },
+    {
+      "cantidad": 1,
+      "producto": { "idProducto": 2 }
+    }
+  ]
+}
+
+### 5.2 Ver mi Historial de Pedidos
+GET http://localhost:3000/api/pedidos
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+### 5.3 Ver Detalle de un Pedido Específico (ej: ID 1)
+GET http://localhost:3000/api/pedidos/1
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+### 5.4 Actualizar estado del pedido (Manual/Admin)
+PUT http://localhost:3000/api/pedidos/1
+Content-Type: application/json
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+{
+  "estado": "ENTREGADO"
+}
+
+### 5.5 Eliminar Pedido (Solo si está CREADO)
+DELETE http://localhost:3000/api/pedidos/1
+Authorization: Bearer <PEGAR_TOKEN_ALUMNO_AQUI>
+
+### ------------------------------------------------------------------------
+### NUEVO: GESTIÓN DE INCIDENCIAS (HU 7.2)
+### ------------------------------------------------------------------------
+
+### 5.6 REPORTAR INCIDENCIA
+# Reemplaza el '1' por el ID de un pedido tuyo que ya exista.
+POST http://localhost:3000/api/pedidos/1/reportar
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiMjAyMjAwMDEiLCJyb2wiOiJhbHVtbm8iLCJ0aWVuZGFJZCI6bnVsbCwiaWF0IjoxNzYzNzUzNTczLCJleHAiOjE3NjM4Mzk5NzN9.wb1vpHAs-8LTSVoewPsrTOysDMtw5rn-KEFbD0arDD4
+
+{
+  "tipo": "Pedido Incompleto",
+  "descripcion": "El repartidor olvidó la gaseosa."
+}

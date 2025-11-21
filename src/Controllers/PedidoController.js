@@ -1,5 +1,5 @@
 // src/controllers/pedidoController.js
-const { Pedido, ItemPedido, Producto, User } = require('../../db/models'); 
+const { Pedido, ItemPedido, Producto, User, Incidencia } = require('../../db/models'); 
 
 
 // POST /api/pedidos - Crea un nuevo pedido (VALIDANDO PRECIOS)
@@ -124,11 +124,13 @@ exports.getMyOrders = async (req, res) => {
 };
 
 
-// PUT /api/pedidos/:id
-//Actualizar pedido
+// PUT /api/pedidos/:id (Actualizar estado + Notificar)
 exports.updateOrder = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
+    
+    // 1. RECUPERAMOS 'io' DE LA APP (Esto es lo nuevo)
+    const io = req.app.get('io'); 
 
     try {
         const pedido = await Pedido.findByPk(id);
@@ -137,9 +139,21 @@ exports.updateOrder = async (req, res) => {
             return res.status(404).json({ message: 'Pedido no encontrado' });
         }
 
-        // Actualizamos el estado
+        // 2. Actualizamos el estado en la BD
         pedido.estado = estado;
         await pedido.save();
+
+        // 3. MAGIA DE NOTIFICACIONES (HU 8.7)
+        // Si existe 'io', enviamos un mensaje a la "sala" de este pedido
+        if (io) {
+            io.to(`pedido_${id}`).emit('notification', {
+                titulo: 'Estado Actualizado',
+                mensaje: `Tu pedido #${id} ha cambiado a: ${estado}`,
+                nuevoEstado: estado,
+                pedidoId: id
+            });
+            console.log(`🔔 Notificación enviada al pedido ${id}: ${estado}`);
+        }
 
         return res.json({ message: `Pedido actualizado a ${estado}`, pedido });
     } catch (error) {
@@ -285,5 +299,47 @@ exports.rateOrder = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Error al calificar.' });
+    }
+
+};
+
+exports.reportIssue = async (req, res) => {
+    const { id } = req.params; // ID del pedido
+    const { tipo, descripcion } = req.body;
+    const usuarioId = req.user.id; // ID del alumno logueado
+
+    if (!tipo || !descripcion) {
+        return res.status(400).json({ message: 'Falta el tipo o la descripción del problema.' });
+    }
+
+    try {
+        // 1. Validar que el pedido exista
+        const pedido = await Pedido.findByPk(id);
+
+        if (!pedido) {
+            return res.status(404).json({ message: 'Pedido no encontrado.' });
+        }
+
+        // 2. Seguridad: Solo el dueño del pedido puede reportarlo
+        if (pedido.usuarioId !== usuarioId) {
+            return res.status(403).json({ message: 'No puedes reportar un pedido que no es tuyo.' });
+        }
+
+        // 3. Crear la incidencia
+        const nuevaIncidencia = await Incidencia.create({
+            pedidoId: id,
+            usuarioId,
+            tipo,
+            descripcion
+        });
+
+        return res.status(201).json({ 
+            message: 'Incidencia reportada correctamente.', 
+            incidencia: nuevaIncidencia 
+        });
+
+    } catch (error) {
+        console.error('Error al reportar incidencia:', error);
+        return res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
