@@ -34,15 +34,24 @@ module.exports = {
         unique: true
       },
       // Guardamos la contraseña encriptada aquí
-      password_hash: { 
+      password: { 
         type: Sequelize.STRING(255),
         allowNull: false
       },
       // Campo extra por si es una tienda
-      tienda_id: {
+      tiendaId: {
         type: Sequelize.INTEGER,
         allowNull: true
       },
+
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
       
       // Si en tu modelo User.js pusiste timestamps: false, puedes borrar o comentar estas lineas:
       /*

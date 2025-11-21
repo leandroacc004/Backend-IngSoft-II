@@ -6,7 +6,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     // Usaremos la contraseña '1234' para todos
     const pass = '1234'; 
-    const hashedPassword = await bcrypt.hash(pass, 10);
+    //const hashedPassword = await bcrypt.hash(pass, 10);
     
     await queryInterface.bulkInsert('Users', [
       // --- ALUMNOS ---
@@ -15,7 +15,7 @@ module.exports = {
         nombre: "Piero S.",
         rol: "alumno",
         email: 'piero.s@ulima.pe',
-        password_hash: hashedPassword,
+        password: "pieros",
         // createdAt y updatedAt eliminados porque tu tabla no los tiene
       },
 
@@ -24,7 +24,7 @@ module.exports = {
         nombre: "Leandro",
         rol: "alumno",
         email: 'leandro.s@ulima.pe',
-        password_hash: hashedPassword,
+        password: "leandro123",
         // createdAt y updatedAt eliminados porque tu tabla no los tiene
       },
       
@@ -35,14 +35,14 @@ module.exports = {
         nombre: "Piero Rodrigo",
         rol: "repartidor",
         email: 'piero.r@ulexpress.pe',
-        password_hash: hashedPassword,
+        password: "pierosegundo12334",
       },
       {
         codigo: "20220165", 
         nombre: "Gerardo",
         rol: "repartidor",
         email: 'gerardo@ulexpress.pe',
-        password_hash: hashedPassword,
+        password: "gerarditope",
       },
     ], {});
   },
