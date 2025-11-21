@@ -1,11 +1,11 @@
 ### Obtener todos los repartidores
-GET http://localhost:3000/repartidor
+GET http://localhost:3000/api/repartidor
 
 ### Obtener repartidor por ID
-GET http://localhost:3000/repartidor/1
+GET http://localhost:3000/api/repartidor/1
 
 ### Registrar repartidor
-POST http://localhost:3000/repartidor
+POST http://localhost:3000/api/repartidor
 Content-Type: application/json
 
 {
@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 
 ### Actualizar repartidor
-PUT http://localhost:3000/repartidor/1
+PUT http://localhost:3000/api/repartidor/1
 Content-Type: application/json
 
 {
@@ -22,4 +22,9 @@ Content-Type: application/json
 }
 
 ### Eliminar repartidor
-DELETE http://localhost:3000/repartidor/1
+DELETE http://localhost:3000/api/repartidor/1
+
+
+
+
+// Acepte el pedido

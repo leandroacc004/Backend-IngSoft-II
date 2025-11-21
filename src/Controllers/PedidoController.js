@@ -1,8 +1,5 @@
 // src/controllers/pedidoController.js
-
-const { Pedido, ItemPedido } = require('../../db/models');
-const { v4: uuidv4 } = require('uuid'); // Necesitarás 'uuid' para generar el ID como en el frontend
-// Asegúrate de instalar uuid: npm install uuid
+const { Pedido, ItemPedido, Producto, User } = require('../../db/models'); 
 
 // POST /api/pedidos - Crea un nuevo pedido (CHECKOUT)
 exports.createOrder = async (req, res) => {
@@ -16,11 +13,11 @@ exports.createOrder = async (req, res) => {
 
     try {
         // 1. Generar un ID único (como lo hace el frontend con crypto.randomUUID())
-        const pedidoId = uuidv4(); 
+        //const pedidoId = uuidv4(); 
 
         // 2. Crear el Pedido (la orden principal)
         const newPedido = await Pedido.create({
-            id: pedidoId,
+            // id: pedidoId, lo hace la DB
             usuarioId,
             repartidorId: null, // Sin repartidor asignado al inicio
             metodoPago,
@@ -32,7 +29,7 @@ exports.createOrder = async (req, res) => {
 
         // 3. Preparar los ítems del pedido (el carrito)
         const itemsToSave = items.map(item => ({
-            pedidoId: pedidoId,
+            pedidoId: newPedido.id,
             productoId: item.producto.idProducto, // El ID del producto
             nombreSnapshot: item.producto.nombre, 
             precioUnitarioSnapshot: item.producto.precio,
@@ -41,10 +38,10 @@ exports.createOrder = async (req, res) => {
         
         // 4. Crear los ItemPedido
         await ItemPedido.bulkCreate(itemsToSave);
-
+        const idFormateado = String(newPedido.id).padStart(8, '0');
         // 5. Devolver el objeto Pedido que el frontend espera (CheckoutFacade.ts)
         return res.status(201).json({
-            id: newPedido.id,
+            id: idFormateado,
             fecha: newPedido.fecha,
             estado: newPedido.estado,
             total: Number(newPedido.total),
@@ -62,6 +59,102 @@ exports.createOrder = async (req, res) => {
     
 };
 
+
+// GET /api/pedidos
+exports.getMyOrders = async (req, res) => {
+    const userId = req.user.id;
+    const userRol = req.user.rol;
+
+    try {
+        let where = {};
+
+        // Si es alumno, filtrar por usuarioId
+        if (userRol === 'alumno') {
+            where = { usuarioId: userId };
+        } 
+        // Si es repartidor, filtrar por repartidorId
+        else if (userRol === 'repartidor') {
+            where = { repartidorId: userId };
+        }
+        // Si es tienda, habría que filtrar por items que incluyan productos de esa tienda (más complejo, lo dejamos para luego)
+
+        const pedidos = await Pedido.findAll({
+            where,
+            include: [
+                { 
+                    model: ItemPedido, 
+                    as: 'items',
+                    // Incluimos datos del producto para que se vea bonito
+                    include: [{ model: Producto, as: 'producto' }] 
+                },
+                { model: User, as: 'repartidor', attributes: ['nombre', 'codigo'] } // Para ver quién lo trae
+            ],
+            order: [['fecha', 'DESC']] // Los más recientes primero
+        });
+
+        return res.json(pedidos);
+    } catch (error) {
+        console.error('Error al obtener historial:', error);
+        return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+
+// PUT /api/pedidos/:id
+//Actualizar pedido
+exports.updateOrder = async (req, res) => {
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    try {
+        const pedido = await Pedido.findByPk(id);
+
+        if (!pedido) {
+            return res.status(404).json({ message: 'Pedido no encontrado' });
+        }
+
+        // Actualizamos el estado
+        pedido.estado = estado;
+        await pedido.save();
+
+        return res.json({ message: `Pedido actualizado a ${estado}`, pedido });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error al actualizar pedido' });
+    }
+};
+
+
+// DELETE /api/pedidos/:id
+// BORRAR PEDIDO POR ID
+exports.deleteOrder = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const pedido = await Pedido.findByPk(id);
+
+        if (!pedido) {
+            return res.status(404).json({ message: 'Pedido no encontrado.' });
+        }
+
+        // Validación opcional: Solo borrar si nadie lo ha tomado aún
+        if (pedido.estado !== 'CREADO') {
+            return res.status(400).json({ message: 'No se puede eliminar un pedido que ya está en proceso o entregado.' });
+        }
+
+        // Borrar el pedido (y sus items se borran solos si configuraste CASCADE en la DB, 
+        // pero Sequelize lo suele manejar bien)
+        await pedido.destroy();
+
+        return res.json({ message: 'Pedido eliminado correctamente.' });
+
+    } catch (error) {
+        console.error('Error al eliminar pedido:', error);
+        return res.status(500).json({ message: 'Error interno al eliminar el pedido.' });
+    }
+};
+
+
 // src/controllers/pedidoController.js (Continuación)
 
 // ... (requires, exports.createOrder, exports.getHistory)
@@ -78,7 +171,7 @@ exports.getAvailableOrders = async (req, res) => {
             // Incluir el cliente (estudiante) y la tienda donde recoger el pedido.
             include: [
                 { model: ItemPedido, as: 'items', include: [{ model: Producto, as: 'producto', include: ['tienda'] }] },
-                { model: Usuario, as: 'cliente', attributes: ['nombre', 'codigo'] }
+                { model: User, as: 'cliente', attributes: ['nombre', 'codigo'] }
             ],
             attributes: ['id', 'fecha', 'total', 'metodoPago'],
             order: [['fecha', 'ASC']]
@@ -90,7 +183,7 @@ exports.getAvailableOrders = async (req, res) => {
             const tienda = p.items[0]?.producto.tienda;
 
             return {
-                id: p.id,
+                id: String(p.id).padStart(8, '0'),
                 fecha: p.fecha,
                 total: Number(p.total),
                 metodoPago: p.metodoPago,

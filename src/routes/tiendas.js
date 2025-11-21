@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../Middleware/authMiddleware');
-const tiendaController = require('../Controllers/tiendaController');
+const tiendaController = require('../Controllers/TiendaController');
 
 // Middleware para verificar que el rol sea 'tienda'
 const isTiendaAdmin = (req, res, next) => {
@@ -17,6 +17,12 @@ const isTiendaAdmin = (req, res, next) => {
 };
 
 // Todas las rutas de administración están protegidas y requieren rol 'tienda'
+//Llamada a todas las tiendas
+router.get('/', tiendaController.listAll);
+
+//Llamada a tienda por ID
+router.get('/:id', tiendaController.getById);
+
 // POST /api/tienda/productos (Añadir)
 router.post('/productos', verifyToken, isTiendaAdmin, tiendaController.addProduct); 
 

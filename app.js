@@ -11,6 +11,7 @@ const db = require('./db/models');
 const PORT = process.env.PORT || 3000;
 
 // --- IMPORTACIÓN DE RUTAS DE API ---
+var userRoutes = require('./src/routes/users');
 var authRoutes = require('./src/routes/auth');
 var tiendaRoutes = require('./src/routes/tiendas');
 var pedidoRoutes = require('./src/routes/pedidos');
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tiendas', tiendaRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/repartidor', repartidorRoutes);
+app.use('/api/users', userRoutes);
 // app.use('/api/tienda', tiendaAdminRoutes); // Activa esta línea solo si el archivo existe
 
 // --- MANEJO DE ERRORES ---

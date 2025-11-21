@@ -40,6 +40,31 @@ exports.listAll = async (req, res) => {
     }
 };
 
+
+// GET /api/tiendas/:id
+exports.getById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const tienda = await Tienda.findByPk(id, {
+            // Incluimos el catálogo de productos automáticamente
+            include: [{ 
+                model: Producto, 
+                as: 'catalogo' // Debe coincidir con el "as" en tu modelo Tienda.js
+            }]
+        });
+
+        if (!tienda) {
+            return res.status(404).json({ message: 'Tienda no encontrada' });
+        }
+
+        return res.json(tienda);
+    } catch (error) {
+        console.error('Error al obtener tienda:', error);
+        return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+
 // ... (Aquí irá la lógica para obtener el detalle de la tienda)
 
 // src/Controllers/tiendaController.js (Continuación)

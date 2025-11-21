@@ -1,0 +1,51 @@
+### 3.1 Listar Tiendas (Público - Pantalla Home)
+GET http://localhost:3000/api/tiendas
+
+### 3.2 Buscar Tiendas (Buscador)
+GET http://localhost:3000/api/tiendas/2
+# GET http://localhost:3000/api/tiendas?q=dunkin
+
+### 3.3 Ver Detalle de Tienda y Productos por ID tienda
+GET http://localhost:3000/api/tiendas/1
+
+
+# ESTE FALTA CREARLO PORQUE DA ERROR
+### 3.4 Crear Tienda Nueva (Admin)
+POST http://localhost:3000/api/tiendas
+Content-Type: application/json
+
+{
+  "nombre": "Bembos",
+  "ubicacion": "Patio de Comidas",
+  "logo_url": "/img/tiendas/bembos.jpg"
+}
+
+### 3.5 Añadir Producto (Requiere Token de TIENDA)
+POST http://localhost:3000/api/tiendas/productos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiY29kaWdvIjoiQURNSU4tRFVOS0lOIiwicm9sIjoidGllbmRhIiwidGllbmRhSWQiOjEsImlhdCI6MTc2MzcxMTU4MCwiZXhwIjoxNzYzNzk3OTgwfQ.QP1wjBNPQZoguFw5ysOwporEXvJHspuSQBYvhJrWTiQ
+
+{
+  "nombre": "Hamburguesa Royal",
+  "precio": 15.90,
+  "imagen": "/img/productos/royal.jpg",
+  "stock": true
+}
+
+### 3.6 Cambiar Stock (Panel Tienda)
+PATCH http://localhost:3000/api/tiendas/productos/1/stock
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiY29kaWdvIjoiQURNSU4tRFVOS0lOIiwicm9sIjoidGllbmRhIiwidGllbmRhSWQiOjEsImlhdCI6MTc2MzcxMTU4MCwiZXhwIjoxNzYzNzk3OTgwfQ.QP1wjBNPQZoguFw5ysOwporEXvJHspuSQBYvhJrWTiQ
+
+{
+  "stock": false
+}
+
+### 3.7 Cambiar Precio (Panel Tienda)
+PATCH http://localhost:3000/api/tiendas/productos/1/precio
+Content-Type: application/json
+Authorization: Bearer PEGA_TOKEN_TIENDA
+
+{
+  "precio": 20.00
+}

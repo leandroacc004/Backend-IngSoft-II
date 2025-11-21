@@ -1,29 +1,57 @@
 ### Obtener todos los pedidos
-GET http://localhost:3000/pedidos
+GET http://localhost:3000/api/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiVEVTVC0wMSIsInJvbCI6ImFkbWluIiwidGllbmRhSWQiOm51bGwsImlhdCI6MTc2MzcwMjk3MSwiZXhwIjoxNzYzNzg5MzcxfQ.QuPBLgRqTcJX-RSUaFRJjeTNrA7rwIL6qO4uTGawLB0
+
 
 ### Obtener pedido por ID
-GET http://localhost:3000/pedidos/1
+GET http://localhost:3000/api/pedidos/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiVEVTVC0wMSIsInJvbCI6ImFkbWluIiwidGllbmRhSWQiOm51bGwsImlhdCI6MTc2MzcwMjk3MSwiZXhwIjoxNzYzNzg5MzcxfQ.QuPBLgRqTcJX-RSUaFRJjeTNrA7rwIL6qO4uTGawLB0
 
-### Crear un pedido
-POST http://localhost:3000/pedidos
+
+### Crear un pedido (Correcto)
+#router.post('/', verifyToken, pedidoController.createOrder); // POST /api/pedidos
+POST http://localhost:3000/api/pedidos
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiVEVTVC0wMSIsInJvbCI6ImFkbWluIiwidGllbmRhSWQiOm51bGwsImlhdCI6MTc2MzcwMjk3MSwiZXhwIjoxNzYzNzg5MzcxfQ.QuPBLgRqTcJX-RSUaFRJjeTNrA7rwIL6qO4uTGawLB0
 
 {
-  "userId": 1,
-  "tiendaId": 2,
+  "metodoPago": "efectivo",
+  "subtotal": 26.00,
+  "delivery": 5.00,
+  "total": 31.00,
   "items": [
-    { "productoId": 1, "cantidad": 2 },
-    { "productoId": 3, "cantidad": 1 }
+    {
+      "cantidad": 2,
+      "producto": {
+        "idProducto": 1,
+        "nombre": "Café Pequeño",
+        "precio": 8.00
+      }
+    },
+    {
+      "cantidad": 1,
+      "producto": {
+        "idProducto": 2,
+        "nombre": "Café Mediano",
+        "precio": 10.00
+      }
+    }
   ]
 }
 
 ### Actualizar estado del pedido
-PUT http://localhost:3000/pedidos/1
+#router.put('/:id', verifyToken, pedidoController.updateOrder);
+PUT http://localhost:3000/api/pedidos/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiVEVTVC0wMSIsInJvbCI6ImFkbWluIiwidGllbmRhSWQiOm51bGwsImlhdCI6MTc2MzcwMjk3MSwiZXhwIjoxNzYzNzg5MzcxfQ.QuPBLgRqTcJX-RSUaFRJjeTNrA7rwIL6qO4uTGawLB0
 
 {
   "estado": "ENTREGADO"
+  //CREADO
+  // CANCELADO
 }
 
 ### Eliminar pedido
-DELETE http://localhost:3000/pedidos/1
+DELETE http://localhost:3000/api/pedidos/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiY29kaWdvIjoiVEVTVC0wMSIsInJvbCI6ImFkbWluIiwidGllbmRhSWQiOm51bGwsImlhdCI6MTc2MzcwMjk3MSwiZXhwIjoxNzYzNzg5MzcxfQ.QuPBLgRqTcJX-RSUaFRJjeTNrA7rwIL6qO4uTGawLB0
+

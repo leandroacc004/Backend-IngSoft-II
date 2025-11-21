@@ -11,11 +11,14 @@ module.exports = {
     await queryInterface.bulkInsert('Users', [
       // --- ALUMNOS ---
       {
-        codigo: "20194613", 
+        codigo: "20194613",
         nombre: "Piero S.",
         rol: "alumno",
         email: 'piero.s@ulima.pe',
         password: "pieros",
+        activo: true, // <--- Nuevo campo
+        createdAt: new Date(), // <--- OBLIGATORIO
+        updatedAt: new Date()  // <--- OBLIGATORIO
         // createdAt y updatedAt eliminados porque tu tabla no los tiene
       },
 
@@ -25,6 +28,9 @@ module.exports = {
         rol: "alumno",
         email: 'leandro.s@ulima.pe',
         password: "leandro123",
+        activo: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
         // createdAt y updatedAt eliminados porque tu tabla no los tiene
       },
       
@@ -36,6 +42,9 @@ module.exports = {
         rol: "repartidor",
         email: 'piero.r@ulexpress.pe',
         password: "pierosegundo12334",
+        activo: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         codigo: "20220165", 
@@ -43,6 +52,9 @@ module.exports = {
         rol: "repartidor",
         email: 'gerardo@ulexpress.pe',
         password: "gerarditope",
+        activo: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
     ], {});
   },

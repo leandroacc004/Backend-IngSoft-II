@@ -4,14 +4,15 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   const Pedido = sequelize.define('Pedido', {
     id: { // Se usará un UUID/STRING para que sea como el crypto.randomUUID() del frontend
-      type: DataTypes.STRING(36),
+      type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
       allowNull: false,
     },
     usuarioId: { // El estudiante que realiza el pedido
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'usuario_id',
+      field: 'users_id',
     },
     repartidorId: { // El repartidor asignado (puede ser nulo inicialmente)
       type: DataTypes.INTEGER,

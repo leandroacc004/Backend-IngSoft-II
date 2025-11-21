@@ -6,7 +6,11 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,     // Asegúrate que sea email
     password: DataTypes.STRING,  // <--- ASÍ DEBE QUEDAR (sin hash)
     rol: DataTypes.STRING,
-    tiendaId: DataTypes.INTEGER
+    tiendaId: DataTypes.INTEGER,
+    activo: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    }
   }, {
     sequelize,
     modelName: 'User',

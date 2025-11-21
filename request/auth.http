@@ -1,11 +1,3 @@
-POST http://localhost:3000/api/auth/login
-Content-Type: application/json
-
-{
-  "correo": "leandro@gmail.com",
-  "password": "123456"
-}
-
 ### Register
 POST http://localhost:3000/api/auth/register
 Content-Type: application/json
@@ -16,4 +8,13 @@ Content-Type: application/json
   "nombre": "Gerardo",
   "rol": "admin",
   "email": "test@test.com"
+}
+
+# LOGIN
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "codigo": "TEST-01",
+  "password": "miPasswordVisible"
 }

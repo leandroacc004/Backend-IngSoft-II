@@ -7,8 +7,9 @@ module.exports = {
     await queryInterface.createTable('pedidos', {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.STRING(36),
+        type: Sequelize.INTEGER
       },
       users_id: {
         type: Sequelize.INTEGER,
@@ -60,7 +61,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       pedido_id: {
-        type: Sequelize.STRING(36),
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: { model: 'pedidos', key: 'id' },
         onUpdate: 'CASCADE',

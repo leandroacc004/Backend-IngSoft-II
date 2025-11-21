@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
       autoIncrement: true,
     },
     pedidoId: {
-      type: DataTypes.STRING(36), // Debe coincidir con el tipo del ID de Pedido
+      type: DataTypes.INTEGER, // Debe coincidir con el tipo del ID de Pedido
       allowNull: false,
       field: 'pedido_id',
     },
