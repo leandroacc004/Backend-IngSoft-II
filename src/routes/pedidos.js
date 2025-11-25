@@ -1,5 +1,3 @@
-// src/routes/pedidos.js
-
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../Middleware/authMiddleware'); // Middleware de protección
@@ -23,12 +21,9 @@ router.delete('/:id', verifyToken, pedidoController.deleteOrder);
 // Calificar pedido (NUEVA)
 router.patch('/:id/calificar', verifyToken, pedidoController.rateOrder);
 
-
-
-
-
 // NUEVA RUTA: Reportar Incidencia
 router.post('/:id/reportar', verifyToken, pedidoController.reportIssue);
 
+router.get('/:id/mensajes', verifyToken, pedidoController.getChatHistory);
 
 module.exports = router;

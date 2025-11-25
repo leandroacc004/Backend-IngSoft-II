@@ -1,5 +1,5 @@
 // src/controllers/pedidoController.js
-const { Pedido, ItemPedido, Producto, User, Incidencia } = require('../../db/models'); 
+const { Pedido, ItemPedido, Producto, User, Incidencia, Mensaje} = require('../../db/models'); 
 
 
 // POST /api/pedidos - Crea un nuevo pedido (VALIDANDO PRECIOS)
@@ -341,5 +341,29 @@ exports.reportIssue = async (req, res) => {
     } catch (error) {
         console.error('Error al reportar incidencia:', error);
         return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+// NUEVO: GET /api/pedidos/:id/mensajes
+exports.getChatHistory = async (req, res) => {
+    const { id } = req.params; // ID del pedido
+
+    try {
+        const mensajes = await Mensaje.findAll({
+            where: { pedidoId: id },
+            order: [['fecha', 'ASC']], // Los más viejos primero (cronológico)
+            include: [
+                { 
+                    model: User, 
+                    as: 'emisor', 
+                    attributes: ['id', 'nombre', 'rol'] // Para saber quién escribió
+                }
+            ]
+        });
+
+        return res.json(mensajes);
+    } catch (error) {
+        console.error('Error al obtener chat:', error);
+        return res.status(500).json({ message: 'Error interno al cargar el chat.' });
     }
 };

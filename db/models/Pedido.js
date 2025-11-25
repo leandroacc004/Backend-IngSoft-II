@@ -58,7 +58,8 @@ module.exports = (sequelize) => {
     Pedido.belongsTo(models.User, { foreignKey: 'usuarioId', as: 'cliente' });
     Pedido.belongsTo(models.User, { foreignKey: 'repartidorId', as: 'repartidor' });
     Pedido.hasMany(models.ItemPedido, { foreignKey: 'pedidoId', as: 'items' });
-  };
+    Pedido.hasMany(models.Mensaje, { foreignKey: 'pedidoId', as: 'chat' });
+    };
 
   return Pedido;
 };
